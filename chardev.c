@@ -16,7 +16,7 @@ static char Message[BUF_LEN];
  * Используется в том случае, если сообщение оказывется длиннее
  * чем размер буфера. 
  */
-//static char *Message_Ptr;
+static char *Message_Ptr;
 
 
 // Ниже мы задаём информацию о модуле, которую можно будет увидеть с помощью Modinfo
@@ -88,7 +88,7 @@ static int device_open( struct inode *inode, struct file *file )
 {
 
   printk("device_open\n");
- text_ptr = text;
+ text_ptr = Message;
 
  if ( is_device_open )
   return -EBUSY;
@@ -106,16 +106,18 @@ static int device_release( struct inode *inode, struct file *file )
 }
 
 
-static ssize_t device_write(struct file *file, const char __user * buffer, size_t length, loff_t * offset)
+static ssize_t device_write(struct file *file, const char  __user * buffer, size_t length, loff_t * offset)
 {
   int i;
 
-  printk("device_write(%p,%s,%d)", file, buffer, length);
+  printk("device_write\n");
 
-  for (i = 0; i < length && i < BUF_LEN; i++);
-    //get_user(Message[i], buffer + i);
+  for (i = 0; i < length && i < BUF_LEN; i++)
+    get_user(Message[i], buffer + i);
 
-  //Message_Ptr = Message;
+  printk("!*%s\n", Message);
+
+  Message_Ptr = Message;
 
   /* 
    * Вернуть количество принятых байт
@@ -129,23 +131,10 @@ static ssize_t device_read(struct file *file, char __user * buffer, size_t lengt
   /* 
    * Количество байт, фактически записанных в буфер
    */
-  int bytes_read = 0;
 
-  printk("device_read(%p,%p,%d)\n", file, buffer, length);
+  printk("device_read\n");
 
-  return bytes_read;
-
-}
-
-/*---------------------------------------------------------------------------------------------------------*/
-
-/*
-static ssize_t device_read( struct file *filp,
-       char *buffer,
-       size_t length,
-       loff_t *offset )
-{
- int byte_read = 0;
+  int byte_read = 0;
 
  if ( *text_ptr == 0 )
   return 0;
@@ -157,16 +146,8 @@ static ssize_t device_read( struct file *filp,
   byte_read++;
  }
 
+
  return byte_read;
+
 }
-
-
-static ssize_t
-
-device_write( struct file *filp, const char *buff, size_t len, loff_t * off )
-{
- printk( "Sorry, this operation isn't supported.\n" );
- return -EINVAL;
-}
-*/
 
