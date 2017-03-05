@@ -1,0 +1,1 @@
+cmd_/home/mistress/drivers/lab2/chardev.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/mistress/drivers/lab2/chardev.ko /home/mistress/drivers/lab2/chardev.o /home/mistress/drivers/lab2/chardev.mod.o
